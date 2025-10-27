@@ -99,22 +99,31 @@ class _SplashGateState extends State<SplashGate> {
   Widget build(BuildContext context) {
     final cs = Theme.of(context).colorScheme;
     return Scaffold(
-      backgroundColor: cs.primaryContainer,
-      body: Center(
-        child: Column(
-          mainAxisSize: MainAxisSize.min,
-          children: [
-            Image.asset(
-              'images/ORALAURA.png',
-              width: 140,
-              fit: BoxFit.contain,
+      body: BrandedBackground(
+        child: SafeArea(
+          child: Center(
+            child: Column(
+              mainAxisSize: MainAxisSize.min,
+              children: [
+                Image.asset(
+                  'images/ORALAURA.png',
+                  width: 140,
+                  fit: BoxFit.contain,
+                ),
+                const SizedBox(height: 16),
+                Text('OralAura', style: Theme.of(context).textTheme.headlineLarge),
+                const SizedBox(height: 8),
+                Text(
+                  'Your AI-Powered Guide to Proactive Oral Health',
+                  textAlign: TextAlign.center,
+                  style: Theme.of(context)
+                      .textTheme
+                      .bodyLarge
+                      ?.copyWith(color: cs.onSurface.withOpacity(0.72)),
+                ),
+              ],
             ),
-            const SizedBox(height: 16),
-            Text('OralAura', style: Theme.of(context).textTheme.headlineLarge?.copyWith(color: cs.onPrimaryContainer)),
-            const SizedBox(height: 8),
-            Text('Your AI-Powered Guide to Proactive Oral Health',
-                textAlign: TextAlign.center, style: TextStyle(color: cs.onPrimaryContainer.withOpacity(0.8))),
-          ],
+          ),
         ),
       ),
     );
@@ -168,62 +177,68 @@ class _OnboardingScreenState extends State<OnboardingScreen> {
       ),
       body: BrandedBackground(
         child: Column(
-        children: [
-          Expanded(
-            child: PageView(
-              controller: controller,
-              onPageChanged: (i) => setState(() => index = i),
-              children: pages,
+          children: [
+            Expanded(
+              child: PageView(
+                controller: controller,
+                onPageChanged: (i) => setState(() => index = i),
+                children: pages,
+              ),
             ),
-          ),
-          const SizedBox(height: 8),
-          Row(
-            mainAxisAlignment: MainAxisAlignment.center,
-            children: List.generate(
-              pages.length,
-              (i) => AnimatedContainer(
-                duration: const Duration(milliseconds: 250),
-                margin: const EdgeInsets.all(4),
-                height: 8,
-                width: i == index ? 24 : 8,
-                decoration: BoxDecoration(
-                  color: i == index ? cs.primary : cs.outlineVariant,
-                  borderRadius: BorderRadius.circular(12),
+            const SizedBox(height: 8),
+            Row(
+              mainAxisAlignment: MainAxisAlignment.center,
+              children: List.generate(
+                pages.length,
+                (i) => AnimatedContainer(
+                  duration: const Duration(milliseconds: 250),
+                  margin: const EdgeInsets.all(4),
+                  height: 8,
+                  width: i == index ? 24 : 8,
+                  decoration: BoxDecoration(
+                    color: i == index ? cs.primary : cs.outlineVariant,
+                    borderRadius: BorderRadius.circular(12),
+                  ),
                 ),
               ),
             ),
-          ),
-          const SizedBox(height: 16),
-          Padding(
-            padding: const EdgeInsets.fromLTRB(16, 0, 16, 24),
-            child: Row(
-              children: [
-                Expanded(
-                  child: OutlinedButton(
-                    onPressed: index == 0
-                        ? null
-                        : () => controller.previousPage(duration: const Duration(milliseconds: 250), curve: Curves.easeOut),
-                    child: const Text('Back'),
+            const SizedBox(height: 16),
+            Padding(
+              padding: const EdgeInsets.fromLTRB(16, 0, 16, 24),
+              child: Row(
+                children: [
+                  Expanded(
+                    child: OutlinedButton(
+                      onPressed: index == 0
+                          ? null
+                          : () => controller.previousPage(
+                                duration: const Duration(milliseconds: 250),
+                                curve: Curves.easeOut,
+                              ),
+                      child: const Text('Back'),
+                    ),
                   ),
-                ),
-                const SizedBox(width: 12),
-                Expanded(
-                  child: FilledButton(
-                    onPressed: () {
-                      if (index == pages.length - 1) {
-                        Navigator.pushReplacementNamed(context, LoginScreen.route);
-                      } else {
-                        controller.nextPage(
-                            duration: const Duration(milliseconds: 250), curve: Curves.easeOut);
-                      }
-                    },
-                    child: Text(index == pages.length - 1 ? 'Continue' : 'Next'),
+                  const SizedBox(width: 12),
+                  Expanded(
+                    child: FilledButton(
+                      onPressed: () {
+                        if (index == pages.length - 1) {
+                          Navigator.pushReplacementNamed(context, LoginScreen.route);
+                        } else {
+                          controller.nextPage(
+                            duration: const Duration(milliseconds: 250),
+                            curve: Curves.easeOut,
+                          );
+                        }
+                      },
+                      child: Text(index == pages.length - 1 ? 'Continue' : 'Next'),
+                    ),
                   ),
-                ),
-              ],
+                ],
+              ),
             ),
-          )
-        ],
+          ],
+        ),
       ),
     );
   }
@@ -304,7 +319,7 @@ class _LoginScreenState extends State<LoginScreen> {
     final cs = Theme.of(context).colorScheme;
     return Scaffold(
       appBar: AppBar(title: const _LogoTitle(title: 'Sign in')),
-      body: ListView(
+      body: BrandedBackground(
         padding: const EdgeInsets.all(20),
         child: ListView(
           padding: EdgeInsets.zero,
@@ -398,20 +413,41 @@ class HomeScreen extends StatelessWidget {
             Row(
               children: [
                 Expanded(
+                  child: _StatTile(
+                    label: 'Scans this month',
+                    value: db.scansThisMonth().toString(),
+                    icon: Icons.calendar_month_outlined,
+                  ),
                 child: _StatTile(
                   label: 'Scans this month',
                   value: db.scansThisMonth().toString(),
                   icon: Icons.calendar_month_outlined,
                 ),
-              ),
-              const SizedBox(width: 12),
-              Expanded(
-                child: _StatTile(
-                  label: 'Total scans',
-                  value: db.scans.length.toString(),
-                  icon: Icons.inventory_2_outlined,
+                const SizedBox(width: 12),
+                Expanded(
+                  child: _StatTile(
+                    label: 'Total scans',
+                    value: db.scans.length.toString(),
+                    icon: Icons.inventory_2_outlined,
+                  ),
                 ),
+              ],
+            ),
+            const SizedBox(height: 16),
+            Text('Recent Scans', style: Theme.of(context).textTheme.titleLarge),
+            const SizedBox(height: 8),
+            if (db.scans.isEmpty)
+              _EmptyState(
+                icon: Icons.image_search_outlined,
+                title: 'No scans yet',
+                body: 'Tap “New Scan” to begin.',
+              )
+            else
+              ...db.scans.map(
+                (s) => _ScanListTile(record: s, color: _severityColor(context, s.severity)),
               ),
+            const SizedBox(height: 96), // breathing room for FAB
+          ],
             ],
           ),
           const SizedBox(height: 16),
@@ -543,18 +579,22 @@ class _ScanFlowScreenState extends State<ScanFlowScreen> {
                 ),
                 const SizedBox(height: 12),
                 Row(
-                  children: const [
-                    Icon(Icons.light_mode_outlined),
-                    SizedBox(width: 8),
-                    Expanded(child: Text('Stand near a light source, avoid harsh shadows.')),
+                  children: [
+                    const Icon(Icons.light_mode_outlined),
+                    const SizedBox(width: 8),
+                    const Expanded(
+                      child: Text('Stand near a light source, avoid harsh shadows.'),
+                    ),
                   ],
                 ),
                 const SizedBox(height: 6),
                 Row(
-                  children: const [
-                    Icon(Icons.center_focus_weak_outlined),
-                    SizedBox(width: 8),
-                    Expanded(child: Text('Center the area of concern in the frame.')),
+                  children: [
+                    const Icon(Icons.center_focus_weak_outlined),
+                    const SizedBox(width: 8),
+                    const Expanded(
+                      child: Text('Center the area of concern in the frame.'),
+                    ),
                   ],
                 ),
               ],
@@ -672,6 +712,7 @@ class _ScanFlowScreenState extends State<ScanFlowScreen> {
 
     return Scaffold(
       appBar: AppBar(title: const _LogoTitle(title: 'New Scan')),
+      body: BrandedBackground(
       body: Padding(
         padding: const EdgeInsets.all(16),
         child: AnimatedSwitcher(
@@ -700,6 +741,14 @@ class ResultsScreen extends StatelessWidget {
 
     return Scaffold(
       appBar: AppBar(title: const _LogoTitle(title: 'Results')),
+      body: BrandedBackground(
+        child: ListView(
+          padding: const EdgeInsets.all(16),
+          children: [
+            Card(
+              child: Padding(
+                padding: const EdgeInsets.all(16),
+                child: Row(
       body: ListView(
         padding: const EdgeInsets.all(16),
         children: [
@@ -950,6 +999,18 @@ class SettingsScreen extends StatelessWidget {
     final cs = Theme.of(context).colorScheme;
     return Scaffold(
       appBar: AppBar(title: const _LogoTitle(title: 'Settings & About')),
+      body: BrandedBackground(
+        child: ListView(
+          padding: const EdgeInsets.all(16),
+          children: [
+            Card(
+              child: ListTile(
+                leading: CircleAvatar(backgroundColor: cs.primaryContainer, child: const Icon(Icons.person)),
+                title: const Text('Your Profile'),
+                subtitle: const Text('Tap to edit (mock)'),
+                onTap: () => ScaffoldMessenger.of(context)
+                    .showSnackBar(const SnackBar(content: Text('Profile editing would go here.'))),
+              ),
       body: ListView(
         padding: const EdgeInsets.all(16),
         children: [
@@ -1003,6 +1064,23 @@ class DentistFinderScreen extends StatelessWidget {
     );
     return Scaffold(
       appBar: AppBar(title: const _LogoTitle(title: 'Find a Dentist')),
+      body: BrandedBackground(
+        child: ListView.separated(
+          padding: const EdgeInsets.all(16),
+          itemCount: items.length,
+          separatorBuilder: (_, __) => const SizedBox(height: 10),
+          itemBuilder: (_, i) {
+            final (title, subtitle) = items[i];
+            return Card(
+              child: ListTile(
+                leading: const Icon(Icons.local_hospital_outlined),
+                title: Text(title),
+                subtitle: Text(subtitle),
+                trailing: FilledButton(
+                  onPressed: () => ScaffoldMessenger.of(context).showSnackBar(
+                    SnackBar(content: Text('Would open Maps for "$title" (mock).')),
+                  ),
+                  child: const Text('Directions'),
       body: ListView.separated(
         padding: const EdgeInsets.all(16),
         itemCount: items.length,
