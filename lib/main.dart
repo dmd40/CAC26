@@ -104,7 +104,11 @@ class _SplashGateState extends State<SplashGate> {
         child: Column(
           mainAxisSize: MainAxisSize.min,
           children: [
-            _LogoMark(size: 96, color: cs.primary),
+            Image.asset(
+              'images/ORALAURA.png',
+              width: 140,
+              fit: BoxFit.contain,
+            ),
             const SizedBox(height: 16),
             Text('OralAura', style: Theme.of(context).textTheme.headlineLarge?.copyWith(color: cs.onPrimaryContainer)),
             const SizedBox(height: 8),
