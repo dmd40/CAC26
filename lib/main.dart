@@ -418,6 +418,10 @@ class HomeScreen extends StatelessWidget {
                     value: db.scansThisMonth().toString(),
                     icon: Icons.calendar_month_outlined,
                   ),
+                child: _StatTile(
+                  label: 'Scans this month',
+                  value: db.scansThisMonth().toString(),
+                  icon: Icons.calendar_month_outlined,
                 ),
                 const SizedBox(width: 12),
                 Expanded(
@@ -444,6 +448,21 @@ class HomeScreen extends StatelessWidget {
               ),
             const SizedBox(height: 96), // breathing room for FAB
           ],
+            ],
+          ),
+          const SizedBox(height: 16),
+          Text('Recent Scans', style: Theme.of(context).textTheme.titleLarge),
+          const SizedBox(height: 8),
+          if (db.scans.isEmpty)
+            _EmptyState(
+              icon: Icons.image_search_outlined,
+              title: 'No scans yet',
+              body: 'Tap “New Scan” to begin.',
+            )
+          else
+            ...db.scans.map((s) => _ScanListTile(record: s, color: _severityColor(context, s.severity))),
+          const SizedBox(height: 96), // breathing room for FAB
+        ],
         ),
       ),
     );
@@ -694,6 +713,7 @@ class _ScanFlowScreenState extends State<ScanFlowScreen> {
     return Scaffold(
       appBar: AppBar(title: const _LogoTitle(title: 'New Scan')),
       body: BrandedBackground(
+      body: Padding(
         padding: const EdgeInsets.all(16),
         child: AnimatedSwitcher(
           duration: const Duration(milliseconds: 250),
@@ -729,6 +749,48 @@ class ResultsScreen extends StatelessWidget {
               child: Padding(
                 padding: const EdgeInsets.all(16),
                 child: Row(
+      body: ListView(
+        padding: const EdgeInsets.all(16),
+        children: [
+          Card(
+            child: Padding(
+              padding: const EdgeInsets.all(16),
+              child: Row(
+                children: [
+                  Container(width: 10, height: 72, decoration: BoxDecoration(color: color, borderRadius: BorderRadius.circular(8))),
+                  const SizedBox(width: 12),
+                  Expanded(
+                    child: Column(
+                      crossAxisAlignment: CrossAxisAlignment.start,
+                      children: [
+                        Text('Summary', style: Theme.of(context).textTheme.titleLarge),
+                        const SizedBox(height: 6),
+                        Text(
+                          _summaryText(rec),
+                          style: TextStyle(color: cs.onSurfaceVariant),
+                        ),
+                        const SizedBox(height: 6),
+                        Wrap(
+                          spacing: 8,
+                          runSpacing: 8,
+                          children: rec.flags.map((f) => Chip(label: Text(f.replaceAll('_', ' ')))).toList(),
+                        ),
+                      ],
+                    ),
+                  ),
+                ],
+              ),
+            ),
+          ),
+          const SizedBox(height: 16),
+          Text('Annotated Image', style: Theme.of(context).textTheme.titleLarge),
+          const SizedBox(height: 8),
+          Card(
+            child: Padding(
+              padding: const EdgeInsets.all(12),
+              child: AspectRatio(
+                aspectRatio: 16 / 9,
+                child: Stack(
                   children: [
                     Container(width: 10, height: 72, decoration: BoxDecoration(color: color, borderRadius: BorderRadius.circular(8))),
                     const SizedBox(width: 12),
@@ -949,6 +1011,16 @@ class SettingsScreen extends StatelessWidget {
                 onTap: () => ScaffoldMessenger.of(context)
                     .showSnackBar(const SnackBar(content: Text('Profile editing would go here.'))),
               ),
+      body: ListView(
+        padding: const EdgeInsets.all(16),
+        children: [
+          Card(
+            child: ListTile(
+              leading: CircleAvatar(backgroundColor: cs.primaryContainer, child: const Icon(Icons.person)),
+              title: const Text('Your Profile'),
+              subtitle: const Text('Tap to edit (mock)'),
+              onTap: () => ScaffoldMessenger.of(context)
+                  .showSnackBar(const SnackBar(content: Text('Profile editing would go here.'))),
             ),
             const SizedBox(height: 12),
             Card(
@@ -1009,6 +1081,20 @@ class DentistFinderScreen extends StatelessWidget {
                     SnackBar(content: Text('Would open Maps for "$title" (mock).')),
                   ),
                   child: const Text('Directions'),
+      body: ListView.separated(
+        padding: const EdgeInsets.all(16),
+        itemCount: items.length,
+        separatorBuilder: (_, __) => const SizedBox(height: 10),
+        itemBuilder: (_, i) {
+          final (title, subtitle) = items[i];
+          return Card(
+            child: ListTile(
+              leading: const Icon(Icons.local_hospital_outlined),
+              title: Text(title),
+              subtitle: Text(subtitle),
+              trailing: FilledButton(
+                onPressed: () => ScaffoldMessenger.of(context).showSnackBar(
+                  SnackBar(content: Text('Would open Maps for "$title" (mock).')),
                 ),
               ),
             );
