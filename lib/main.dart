@@ -158,7 +158,7 @@ class _OnboardingScreenState extends State<OnboardingScreen> {
 
     return Scaffold(
       appBar: AppBar(
-        title: const Text('Get Started'),
+        title: const _LogoTitle(title: 'Get Started'),
         actions: [
           TextButton(
             onPressed: () => Navigator.pushReplacementNamed(context, LoginScreen.route),
@@ -302,7 +302,7 @@ class _LoginScreenState extends State<LoginScreen> {
   Widget build(BuildContext context) {
     final cs = Theme.of(context).colorScheme;
     return Scaffold(
-      appBar: AppBar(title: const Text('Sign in')),
+      appBar: AppBar(title: const _LogoTitle(title: 'Sign in')),
       body: ListView(
         padding: const EdgeInsets.all(20),
         children: [
@@ -366,7 +366,7 @@ class HomeScreen extends StatelessWidget {
 
     return Scaffold(
       appBar: AppBar(
-        title: const Text('OralAura'),
+        title: const _LogoTitle(title: 'OralAura'),
         actions: [
           IconButton(
             onPressed: () => Navigator.pushNamed(context, SettingsScreen.route),
@@ -664,7 +664,7 @@ class _ScanFlowScreenState extends State<ScanFlowScreen> {
     ];
 
     return Scaffold(
-      appBar: AppBar(title: const Text('New Scan')),
+      appBar: AppBar(title: const _LogoTitle(title: 'New Scan')),
       body: Padding(
         padding: const EdgeInsets.all(16),
         child: AnimatedSwitcher(
@@ -692,7 +692,7 @@ class ResultsScreen extends StatelessWidget {
     final cs = Theme.of(context).colorScheme;
 
     return Scaffold(
-      appBar: AppBar(title: const Text('Results')),
+      appBar: AppBar(title: const _LogoTitle(title: 'Results')),
       body: ListView(
         padding: const EdgeInsets.all(16),
         children: [
@@ -865,7 +865,7 @@ class _RemindersScreenState extends State<RemindersScreen> {
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-      appBar: AppBar(title: const Text('Reminders')),
+      appBar: AppBar(title: const _LogoTitle(title: 'Reminders')),
       floatingActionButton: FloatingActionButton(onPressed: _addReminder, child: const Icon(Icons.add)),
       body: reminders.isEmpty
           ? const _EmptyState(
@@ -902,7 +902,7 @@ class SettingsScreen extends StatelessWidget {
   Widget build(BuildContext context) {
     final cs = Theme.of(context).colorScheme;
     return Scaffold(
-      appBar: AppBar(title: const Text('Settings & About')),
+      appBar: AppBar(title: const _LogoTitle(title: 'Settings & About')),
       body: ListView(
         padding: const EdgeInsets.all(16),
         children: [
@@ -955,7 +955,7 @@ class DentistFinderScreen extends StatelessWidget {
       (i) => ('Smile Clinic #$i', '1.${i} mi • Open until 6pm'),
     );
     return Scaffold(
-      appBar: AppBar(title: const Text('Find a Dentist')),
+      appBar: AppBar(title: const _LogoTitle(title: 'Find a Dentist')),
       body: ListView.separated(
         padding: const EdgeInsets.all(16),
         itemCount: items.length,
@@ -998,12 +998,16 @@ class _HeaderCard extends StatelessWidget {
         child: Row(
           children: [
             Container(
-              padding: const EdgeInsets.all(10),
+              padding: const EdgeInsets.all(8),
               decoration: BoxDecoration(
                 color: cs.primaryContainer,
                 borderRadius: BorderRadius.circular(16),
               ),
-              child: const Icon(Icons.waving_hand_rounded),
+              child: Image.asset(
+                'images/ORALAURA.png',
+                height: 32,
+                fit: BoxFit.contain,
+              ),
             ),
             const SizedBox(width: 12),
             Expanded(
@@ -1139,6 +1143,29 @@ class _InfoCard extends StatelessWidget {
   }
 }
 
+class _LogoTitle extends StatelessWidget {
+  final String title;
+  final double logoHeight;
+  const _LogoTitle({required this.title, this.logoHeight = 28});
+
+  @override
+  Widget build(BuildContext context) {
+    final defaultStyle = DefaultTextStyle.of(context).style;
+    return Row(
+      mainAxisSize: MainAxisSize.min,
+      children: [
+        Image.asset(
+          'images/ORALAURA.png',
+          height: logoHeight,
+          fit: BoxFit.contain,
+        ),
+        const SizedBox(width: 8),
+        Text(title, style: defaultStyle),
+      ],
+    );
+  }
+}
+
 class _LogoMark extends StatelessWidget {
   final double size;
   final Color color;
@@ -1146,16 +1173,19 @@ class _LogoMark extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    // Simple “smile + shield” motif
-    return Stack(
-      alignment: Alignment.center,
-      children: [
-        Icon(Icons.shield_outlined, size: size, color: color.withOpacity(0.25)),
-        Positioned(
-          bottom: size * 0.22,
-          child: Icon(Icons.emoji_emotions_outlined, size: size * 0.62, color: color),
-        ),
-      ],
+    final backgroundColor = color.withOpacity(0.12);
+    return Container(
+      width: size,
+      height: size,
+      decoration: BoxDecoration(
+        color: backgroundColor,
+        borderRadius: BorderRadius.circular(size * 0.28),
+      ),
+      padding: EdgeInsets.all(size * 0.16),
+      child: Image.asset(
+        'images/ORALAURA.png',
+        fit: BoxFit.contain,
+      ),
     );
   }
 }
