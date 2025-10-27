@@ -166,7 +166,8 @@ class _OnboardingScreenState extends State<OnboardingScreen> {
           ),
         ],
       ),
-      body: Column(
+      body: BrandedBackground(
+        child: Column(
         children: [
           Expanded(
             child: PageView(
@@ -305,49 +306,52 @@ class _LoginScreenState extends State<LoginScreen> {
       appBar: AppBar(title: const _LogoTitle(title: 'Sign in')),
       body: ListView(
         padding: const EdgeInsets.all(20),
-        children: [
-          Center(child: _LogoMark(size: 72, color: cs.primary)),
-          const SizedBox(height: 8),
-          Center(
-            child: Text('OralAura', style: Theme.of(context).textTheme.headlineMedium),
-          ),
-          const SizedBox(height: 24),
-          TextField(
-            controller: email,
-            decoration: const InputDecoration(labelText: 'Email', prefixIcon: Icon(Icons.email_outlined)),
-            keyboardType: TextInputType.emailAddress,
-          ),
-          const SizedBox(height: 12),
-          TextField(
-            controller: pass,
-            obscureText: obscure,
-            decoration: InputDecoration(
-              labelText: 'Password',
-              prefixIcon: const Icon(Icons.lock_outline),
-              suffixIcon: IconButton(
-                onPressed: () => setState(() => obscure = !obscure),
-                icon: Icon(obscure ? Icons.visibility : Icons.visibility_off),
+        child: ListView(
+          padding: EdgeInsets.zero,
+          children: [
+            Center(child: _LogoMark(size: 72, color: cs.primary)),
+            const SizedBox(height: 8),
+            Center(
+              child: Text('OralAura', style: Theme.of(context).textTheme.headlineMedium),
+            ),
+            const SizedBox(height: 24),
+            TextField(
+              controller: email,
+              decoration: const InputDecoration(labelText: 'Email', prefixIcon: Icon(Icons.email_outlined)),
+              keyboardType: TextInputType.emailAddress,
+            ),
+            const SizedBox(height: 12),
+            TextField(
+              controller: pass,
+              obscureText: obscure,
+              decoration: InputDecoration(
+                labelText: 'Password',
+                prefixIcon: const Icon(Icons.lock_outline),
+                suffixIcon: IconButton(
+                  onPressed: () => setState(() => obscure = !obscure),
+                  icon: Icon(obscure ? Icons.visibility : Icons.visibility_off),
+                ),
               ),
             ),
-          ),
-          const SizedBox(height: 20),
-          FilledButton(onPressed: _goHome, child: const Text('Continue')),
-          const SizedBox(height: 12),
-          OutlinedButton(
-            onPressed: () {
-              // Placeholder for Google Firebase Auth integration
-              // NEED TO DO
-              ScaffoldMessenger.of(context).showSnackBar(
-                const SnackBar(content: Text('Google Sign-In would happen here.')),
-              );
-              _goHome();
-            },
-            child: const Row(
-              mainAxisAlignment: MainAxisAlignment.center,
-              children: [Icon(Icons.account_circle_outlined), SizedBox(width: 8), Text('Continue with Google')],
+            const SizedBox(height: 20),
+            FilledButton(onPressed: _goHome, child: const Text('Continue')),
+            const SizedBox(height: 12),
+            OutlinedButton(
+              onPressed: () {
+                // Placeholder for Google Firebase Auth integration
+                // NEED TO DO
+                ScaffoldMessenger.of(context).showSnackBar(
+                  const SnackBar(content: Text('Google Sign-In would happen here.')),
+                );
+                _goHome();
+              },
+              child: const Row(
+                mainAxisAlignment: MainAxisAlignment.center,
+                children: [Icon(Icons.account_circle_outlined), SizedBox(width: 8), Text('Continue with Google')],
+              ),
             ),
-          ),
-        ],
+          ],
+        ),
       ),
     );
   }
@@ -380,18 +384,20 @@ class HomeScreen extends StatelessWidget {
         label: const Text('New Scan'),
         icon: const Icon(Icons.add_a_photo_rounded),
       ),
-      body: ListView(
+      body: BrandedBackground(
         padding: const EdgeInsets.all(16),
-        children: [
-          _HeaderCard(
-            title: 'Welcome back',
-            subtitle: 'Ready for a quick check-in?',
-            avatar: const CircleAvatar(child: Icon(Icons.person)),
-          ),
-          const SizedBox(height: 12),
-          Row(
-            children: [
-              Expanded(
+        child: ListView(
+          padding: EdgeInsets.zero,
+          children: [
+            _HeaderCard(
+              title: 'Welcome back',
+              subtitle: 'Ready for a quick check-in?',
+              avatar: const CircleAvatar(child: Icon(Icons.person)),
+            ),
+            const SizedBox(height: 12),
+            Row(
+              children: [
+                Expanded(
                 child: _StatTile(
                   label: 'Scans this month',
                   value: db.scansThisMonth().toString(),
@@ -421,6 +427,7 @@ class HomeScreen extends StatelessWidget {
             ...db.scans.map((s) => _ScanListTile(record: s, color: _severityColor(context, s.severity))),
           const SizedBox(height: 96), // breathing room for FAB
         ],
+        ),
       ),
     );
   }
@@ -736,74 +743,110 @@ class ResultsScreen extends StatelessWidget {
                 aspectRatio: 16 / 9,
                 child: Stack(
                   children: [
-                    Container(
-                      decoration: BoxDecoration(
-                        color: cs.surfaceVariant,
-                        borderRadius: BorderRadius.circular(16),
-                      ),
-                      child: const Center(child: Icon(Icons.face_3_rounded, size: 80)),
-                    ),
-                    // Simple translucent highlight boxes (mock)
-                    Positioned(
-                      left: 24,
-                      top: 24,
-                      width: 90,
-                      height: 60,
-                      child: Container(
-                        decoration: BoxDecoration(
-                          color: Colors.amber.withOpacity(0.25),
-                          borderRadius: BorderRadius.circular(10),
-                          border: Border.all(color: Colors.amber, width: 2),
-                        ),
-                      ),
-                    ),
-                    Positioned(
-                      right: 32,
-                      bottom: 28,
-                      width: 70,
-                      height: 48,
-                      child: Container(
-                        decoration: BoxDecoration(
-                          color: Colors.red.withOpacity(0.2),
-                          borderRadius: BorderRadius.circular(10),
-                          border: Border.all(color: Colors.red, width: 2),
-                        ),
+                    Container(width: 10, height: 72, decoration: BoxDecoration(color: color, borderRadius: BorderRadius.circular(8))),
+                    const SizedBox(width: 12),
+                    Expanded(
+                      child: Column(
+                        crossAxisAlignment: CrossAxisAlignment.start,
+                        children: [
+                          Text('Summary', style: Theme.of(context).textTheme.titleLarge),
+                          const SizedBox(height: 6),
+                          Text(
+                            _summaryText(rec),
+                            style: TextStyle(color: cs.onSurfaceVariant),
+                          ),
+                          const SizedBox(height: 6),
+                          Wrap(
+                            spacing: 8,
+                            runSpacing: 8,
+                            children: rec.flags.map((f) => Chip(label: Text(f.replaceAll('_', ' ')))).toList(),
+                          ),
+                        ],
                       ),
                     ),
                   ],
                 ),
               ),
             ),
-          ),
-          const SizedBox(height: 16),
-          Row(
-            children: [
-              Expanded(
-                child: FilledButton.icon(
-                  onPressed: () => Navigator.pushNamed(context, DentistFinderScreen.route),
-                  icon: const Icon(Icons.medical_services_outlined),
-                  label: const Text('Find a Dentist'),
+            const SizedBox(height: 16),
+            Text('Annotated Image', style: Theme.of(context).textTheme.titleLarge),
+            const SizedBox(height: 8),
+            Card(
+              child: Padding(
+                padding: const EdgeInsets.all(12),
+                child: AspectRatio(
+                  aspectRatio: 16 / 9,
+                  child: Stack(
+                    children: [
+                      Container(
+                        decoration: BoxDecoration(
+                          color: cs.surfaceVariant,
+                          borderRadius: BorderRadius.circular(16),
+                        ),
+                        child: const Center(child: Icon(Icons.face_3_rounded, size: 80)),
+                      ),
+                      // Simple translucent highlight boxes (mock)
+                      Positioned(
+                        left: 24,
+                        top: 24,
+                        width: 90,
+                        height: 60,
+                        child: Container(
+                          decoration: BoxDecoration(
+                            color: Colors.amber.withOpacity(0.25),
+                            borderRadius: BorderRadius.circular(10),
+                            border: Border.all(color: Colors.amber, width: 2),
+                          ),
+                        ),
+                      ),
+                      Positioned(
+                        right: 32,
+                        bottom: 28,
+                        width: 70,
+                        height: 48,
+                        child: Container(
+                          decoration: BoxDecoration(
+                            color: Colors.red.withOpacity(0.2),
+                            borderRadius: BorderRadius.circular(10),
+                            border: Border.all(color: Colors.red, width: 2),
+                          ),
+                        ),
+                      ),
+                    ],
+                  ),
                 ),
               ),
-              const SizedBox(width: 12),
-              Expanded(
-                child: OutlinedButton.icon(
-                  onPressed: () => Navigator.pushNamed(context, RemindersScreen.route),
-                  icon: const Icon(Icons.alarm_add_outlined),
-                  label: const Text('Set a Reminder'),
+            ),
+            const SizedBox(height: 16),
+            Row(
+              children: [
+                Expanded(
+                  child: FilledButton.icon(
+                    onPressed: () => Navigator.pushNamed(context, DentistFinderScreen.route),
+                    icon: const Icon(Icons.medical_services_outlined),
+                    label: const Text('Find a Dentist'),
+                  ),
                 ),
-              ),
-            ],
-          ),
-          const SizedBox(height: 18),
-          _InfoCard(
-            icon: Icons.info_outline_rounded,
-            title: 'Educational tips',
-            body:
-                'Avoid spicy/acidic foods around irritated tissue. Keep the area clean. If symptoms persist or worsen, book a dental exam.',
-          ),
-          const SizedBox(height: 96),
-        ],
+                const SizedBox(width: 12),
+                Expanded(
+                  child: OutlinedButton.icon(
+                    onPressed: () => Navigator.pushNamed(context, RemindersScreen.route),
+                    icon: const Icon(Icons.alarm_add_outlined),
+                    label: const Text('Set a Reminder'),
+                  ),
+                ),
+              ],
+            ),
+            const SizedBox(height: 18),
+            _InfoCard(
+              icon: Icons.info_outline_rounded,
+              title: 'Educational tips',
+              body:
+                  'Avoid spicy/acidic foods around irritated tissue. Keep the area clean. If symptoms persist or worsen, book a dental exam.',
+            ),
+            const SizedBox(height: 96),
+          ],
+        ),
       ),
     );
   }
@@ -867,27 +910,31 @@ class _RemindersScreenState extends State<RemindersScreen> {
     return Scaffold(
       appBar: AppBar(title: const _LogoTitle(title: 'Reminders')),
       floatingActionButton: FloatingActionButton(onPressed: _addReminder, child: const Icon(Icons.add)),
-      body: reminders.isEmpty
-          ? const _EmptyState(
-              icon: Icons.alarm_on_outlined,
-              title: 'No reminders yet',
-              body: 'Add one to follow up on an area of concern.',
-            )
-          : ListView.separated(
-              padding: const EdgeInsets.all(16),
-              itemCount: reminders.length,
-              separatorBuilder: (_, __) => const SizedBox(height: 8),
-              itemBuilder: (_, i) => Card(
-                child: ListTile(
-                  leading: const Icon(Icons.alarm_outlined),
-                  title: Text(reminders[i]),
-                  trailing: IconButton(
-                    icon: const Icon(Icons.delete_outline),
-                    onPressed: () => setState(() => reminders.removeAt(i)),
+      body: BrandedBackground(
+        child: reminders.isEmpty
+            ? const Center(
+                child: _EmptyState(
+                  icon: Icons.alarm_on_outlined,
+                  title: 'No reminders yet',
+                  body: 'Add one to follow up on an area of concern.',
+                ),
+              )
+            : ListView.separated(
+                padding: const EdgeInsets.all(16),
+                itemCount: reminders.length,
+                separatorBuilder: (_, __) => const SizedBox(height: 8),
+                itemBuilder: (_, i) => Card(
+                  child: ListTile(
+                    leading: const Icon(Icons.alarm_outlined),
+                    title: Text(reminders[i]),
+                    trailing: IconButton(
+                      icon: const Icon(Icons.delete_outline),
+                      onPressed: () => setState(() => reminders.removeAt(i)),
+                    ),
                   ),
                 ),
               ),
-            ),
+      ),
     );
   }
 }
@@ -914,30 +961,30 @@ class SettingsScreen extends StatelessWidget {
               onTap: () => ScaffoldMessenger.of(context)
                   .showSnackBar(const SnackBar(content: Text('Profile editing would go here.'))),
             ),
-          ),
-          const SizedBox(height: 12),
-          Card(
-            child: SwitchListTile(
-              title: const Text('Dark Mode'),
-              value: Theme.of(context).brightness == Brightness.dark,
-              onChanged: (_) => ScaffoldMessenger.of(context)
-                  .showSnackBar(const SnackBar(content: Text('Theme toggling not wired in this demo.'))),
+            const SizedBox(height: 12),
+            Card(
+              child: SwitchListTile(
+                title: const Text('Dark Mode'),
+                value: Theme.of(context).brightness == Brightness.dark,
+                onChanged: (_) => ScaffoldMessenger.of(context)
+                    .showSnackBar(const SnackBar(content: Text('Theme toggling not wired in this demo.'))),
+              ),
             ),
-          ),
-          const SizedBox(height: 12),
-          _InfoCard(
-            icon: Icons.privacy_tip_outlined,
-            title: 'Privacy reminder',
-            body:
-                'Images you capture may include sensitive health information. Only share with providers you trust. This demo stores nothing remotely.',
-          ),
-          const SizedBox(height: 12),
-          ListTile(
-            leading: const Icon(Icons.info_outline),
-            title: const Text('About OralAura'),
-            subtitle: const Text('Version 0.1.0 (Prototype)'),
-          ),
-        ],
+            const SizedBox(height: 12),
+            _InfoCard(
+              icon: Icons.privacy_tip_outlined,
+              title: 'Privacy reminder',
+              body:
+                  'Images you capture may include sensitive health information. Only share with providers you trust. This demo stores nothing remotely.',
+            ),
+            const SizedBox(height: 12),
+            ListTile(
+              leading: const Icon(Icons.info_outline),
+              title: const Text('About OralAura'),
+              subtitle: const Text('Version 0.1.0 (Prototype)'),
+            ),
+          ],
+        ),
       ),
     );
   }
@@ -971,17 +1018,130 @@ class DentistFinderScreen extends StatelessWidget {
                 onPressed: () => ScaffoldMessenger.of(context).showSnackBar(
                   SnackBar(content: Text('Would open Maps for "$title" (mock).')),
                 ),
-                child: const Text('Directions'),
               ),
-            ),
-          );
-        },
+            );
+          },
+        ),
       ),
     );
   }
 }
 
 /* -------------------------------------- Widgets -------------------------------------- */
+
+class BrandedBackground extends StatelessWidget {
+  final Widget child;
+  final EdgeInsetsGeometry? padding;
+  const BrandedBackground({required this.child, this.padding, super.key});
+
+  @override
+  Widget build(BuildContext context) {
+    final cs = Theme.of(context).colorScheme;
+    final Widget content = padding != null ? Padding(padding: padding!, child: child) : child;
+
+    return Container(
+      decoration: BoxDecoration(
+        gradient: LinearGradient(
+          colors: [
+            cs.surface,
+            cs.surfaceVariant.withOpacity(0.4),
+            cs.primaryContainer.withOpacity(0.35),
+          ],
+          stops: const [0, 0.45, 1],
+          begin: Alignment.topCenter,
+          end: Alignment.bottomRight,
+        ),
+      ),
+      child: Stack(
+        children: [
+          Positioned(
+            top: -90,
+            right: -30,
+            child: _BackgroundOrb(
+              diameter: 260,
+              colors: [
+                cs.primary.withOpacity(0.35),
+                cs.primary.withOpacity(0.05),
+              ],
+            ),
+          ),
+          Positioned(
+            bottom: -80,
+            left: -60,
+            child: _BackgroundOrb(
+              diameter: 280,
+              colors: [
+                cs.secondary.withOpacity(0.28),
+                cs.secondary.withOpacity(0.05),
+              ],
+            ),
+          ),
+          Positioned(
+            top: 160,
+            left: 48,
+            child: Transform.rotate(
+              angle: -pi / 12,
+              child: Container(
+                width: 220,
+                height: 80,
+                decoration: BoxDecoration(
+                  borderRadius: BorderRadius.circular(50),
+                  gradient: LinearGradient(
+                    colors: [
+                      cs.onPrimary.withOpacity(0.12),
+                      cs.onPrimary.withOpacity(0.02),
+                    ],
+                  ),
+                ),
+              ),
+            ),
+          ),
+          Positioned.fill(
+            child: Container(
+              decoration: BoxDecoration(
+                gradient: LinearGradient(
+                  colors: [
+                    cs.surface.withOpacity(0.02),
+                    Colors.transparent,
+                  ],
+                  begin: Alignment.topLeft,
+                  end: Alignment.bottomRight,
+                ),
+              ),
+              child: content,
+            ),
+          ),
+        ],
+      ),
+    );
+  }
+}
+
+class _BackgroundOrb extends StatelessWidget {
+  final double diameter;
+  final List<Color> colors;
+  const _BackgroundOrb({required this.diameter, required this.colors});
+
+  @override
+  Widget build(BuildContext context) {
+    final base = colors.first;
+    return Container(
+      width: diameter,
+      height: diameter,
+      decoration: BoxDecoration(
+        shape: BoxShape.circle,
+        gradient: RadialGradient(colors: colors, radius: 0.9),
+        boxShadow: [
+          BoxShadow(
+            color: base.withOpacity(0.25),
+            blurRadius: diameter * 0.4,
+            spreadRadius: diameter * 0.08,
+          ),
+        ],
+      ),
+    );
+  }
+}
 
 class _HeaderCard extends StatelessWidget {
   final String title;
